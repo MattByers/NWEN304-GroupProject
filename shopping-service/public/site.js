@@ -7,7 +7,8 @@ $.ajax({
 
 
 //Create a new task todo
-    $('#searchBox').on('click', '#searchButton', fucntion(){
+    $('#searchButton').on('click', function(){
+    		alert("CLICKED");
     		var searchString = $('#searchText').val();
         	$.ajax({
                 	url: "/products",
@@ -15,6 +16,19 @@ $.ajax({
                 	dataType: "json",
                 	data: {name: searchString}
 
+                	success: function(result){
+
+                		redraw(result.data);
+                	}
+
     });});
+
+   function redraw(data){
+            var taskHTML = '<img src ="';
+            taskHTML += data[0].imageURL;
+            taskHTML += '"/>'
+            var $newTask = $(taskHTML);
+            $('#display').prepend($newTask);
+    }
 
 });

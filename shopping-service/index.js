@@ -61,7 +61,7 @@ app.get('/products', function(req, res){
 
 app.put('/products', function(req, res){
   var query = "SELECT * FROM products;";
-
+  console.log("HIT")
   if(req.body.name != null){
     query = "SELECT * FROM products WHERE product_name='" + req.body.name + "';";
   }
