@@ -15,6 +15,11 @@ app.use(bodyParser.urlencoded({ // to support URL­encoded bodies
 extended: true 
 }));  
 
+//static files
+app.use("/css", express.static(__dirname + '/css'));
+app.use("/js", express.static(__dirname + '/js'));
+app.use("/fonts", express.static(__dirname + '/fonts'));
+
 app.use(function(req, res, next) {
     if (req.headers.origin) {
         res.header('Access-Control-Allow-Origin', '*')
@@ -25,9 +30,8 @@ app.use(function(req, res, next) {
     next();
 })
 
-
 app.get('/', function(request, response){
-  response.sendFile(path.join(__dirname+'/views/index.html'));
+  response.sendFile(path.join(__dirname+'/views/index'));
 });
 
 app.listen(8080);
