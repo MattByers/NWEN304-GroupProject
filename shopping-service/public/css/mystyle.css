@@ -1,0 +1,30 @@
+.btn-success{
+	background-color: #afb76e;
+	border-color: #afb76e;
+}
+
+.nav-justified{
+	color: #afb76e;
+}
+
+a{
+	color: #afb76e;
+}
+
+a:hover{
+	color: #d9dbc6;
+	font-size: 110%;
+	border-radius: 7px;
+}
+
+.jumbotron{
+	background-color: #d9dbc6;
+}
+
+ul.nav a:hover { 
+	background-color: #fff !important; 
+}
+
+ul.pager a:hover {
+	background-color: #afb76e !important; 
+}

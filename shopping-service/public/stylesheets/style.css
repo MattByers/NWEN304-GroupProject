@@ -1,0 +1,18 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.dave img{
+  width:250px ;
+  height: 157px;
+  margin: 5px;
+  border-radius: 5px;
+}
+.dave{
+	width: 100%;
+}

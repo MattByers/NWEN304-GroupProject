@@ -1,0 +1,26 @@
+body {
+  padding-left: 20px;
+  padding-top: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+
+#productDetails{
+	padding: 50px;
+	margin-bottom: auto;
+	position: center;
+	padding-top: 20px;
+}
+
+#productImg{
+	padding-top: 40px; 
+}
+
+#addCartBtn{
+	padding-top: 15px; 
+}
+
+h3 {
+	padding-top: 0px;
+	padding-bottom: 10px;
+}
