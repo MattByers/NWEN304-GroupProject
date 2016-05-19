@@ -31,7 +31,7 @@ app.use(function(req, res, next) {
   next();
 })
 
-app.use(express.static(__dirname + './index'));
+app.use(express.static(__dirname + '/public'));
 
 //Initial browse page, will query the db for all products.
 app.get('/', function(req, res){

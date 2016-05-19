@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <link href="public/stylesheets/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" type="text/css" href="public/stylesheets/style.css"/>
+  <link href="stylesheets/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" type="text/css" href="stylesheets/style.css"/>
   <script src="//code.jquery.com/jquery-1.11.0.min.js">
   <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
@@ -122,10 +122,11 @@
 
 
   <form class="form-inline pull-xs-right">
-    <input class="form-control" type="text" placeholder="Search">
-    <button class="btn btn-success-outline" type="submit" action="/search">Search</button>
+    <input id = "searchText" class="form-control" type="text" placeholder="Search">
+    <button class="btn btn-success-outline" type="submit" action="/">Search</button>
   </form
   </nav>
+
 
   <div id="display" title="Item Display">
     <p><label for="task">Searched Item</label></p>
