@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+  <link href="public/stylesheets/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" type="text/css" href="public/stylesheets/style.css"/>
+  <script src="//code.jquery.com/jquery-1.11.0.min.js">
+  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</script> -->
   <body>
   <nav class="navbar navbar-light bg-faded">
   <a class="navbar-brand" href="#">Navbar</a>
@@ -9,20 +17,16 @@
       <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#">Features</a>
+      <a class="nav-link" href="#">Login</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Pricing</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">About</a>
-    </li>
+    <li data-toggle="modal" data-target="#loginBox"><a href="#login"><span style="margin-right:5px; font-size:120%;" class="ion ion-person"></span>Login</a></li>
+    <li data-toggle="modal" data-target="#signUpBox" style="cursor:pointer;"><a><span style="margin-right:5px; font-size:120%;" class="ion ion-person-add"></span>Sign Up</a></li>
   </ul>
   <form class="form-inline pull-xs-right">
     <input class="form-control" type="text" placeholder="Search">
     <button class="btn btn-success-outline" type="submit">Search</button>
-  </form>
-</nav>
+  </form
+  </nav>
   <div>
   <p> Index Page </p>
   </body>
