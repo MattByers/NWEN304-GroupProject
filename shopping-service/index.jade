@@ -1,0 +1,152 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    title Colenso Database   
+    // Bootstrap Core CSS
+    link(href='stylesheets/bootstrap.min.css', rel='stylesheet')
+    // Custom CSS
+    link(rel='stylesheet', type='text/css', href='stylesheets/style.css')
+    //Sliers Style
+    link(rel='stylesheet', type='text/css', href='stylesheets/slick.css')
+    link(rel='stylesheet', type='text/css', href='stylesheets/slick-theme.css')
+    script(src='//code.jquery.com/jquery-1.11.0.min.js')
+    script(src='//code.jquery.com/jquery-migrate-1.2.1.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js')
+    script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js')
+    script(src='javascripts/slick.min.js')
+    script(src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
+
+  block body
+    .container-fluid
+      header
+        nav.navbar.navbar-default.navbar-fixed-top
+          .container
+            // Brand and toggle get grouped for better mobile display
+            .navbar-header
+              button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+                span.sr-only Toggle navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+              a.navbar-brand(href="/") Online Shopping System
+            // Collect the nav links, forms, and other content for toggling
+            #bs-example-navbar-collapse-1.collapse.navbar-collapse
+             ul.nav.navbar-nav
+              li
+                a(href='/categories') Categories
+              li
+                a(href='/createlisting') Create Listing
+              li
+                a(href='/account') Profile
+              li
+               form.navbar-form.navbar-right(action = "/shoppingCart")
+                button.btn.btn-default Shopping Cart  
+              li
+               form.navbar-form.navbar-right(role='search', action = "/search", method = "get")
+                .form-group
+                 input.form-control(type='text', placeholder='Search', name = "searchString")
+                button.btn.btn-default(type='submit') Search
+              li(data-toggle='modal', data-target='#loginBox')
+                a(href='#login')
+                  span.ion.ion-person(style='margin-right:5px; font-size:120%;')
+                  | Login
+              li(data-toggle='modal', data-target='#signUpBox', style='cursor:pointer;')
+                a
+                  span.ion.ion-person-add(style='margin-right:5px; font-size:120%;')
+                  | Sign Up
+
+    // Forgot Password Box 
+    #forgotPasswordBox.modal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-label='Close')
+              span(aria-hidden='true')
+                span.glyphicon.glyphicon-remove
+            span.fa.fa-key(style='float: left; font-size: 150%; margin: 5px 10px 0px 0px;')
+            h4(style='float:left') Forgot password
+          .modal-body
+            .form-group
+              label.control-label(for='email') Email:
+              input.form-control(type='text', placeholder='Email...', name='email')
+            .form-group
+              button.btn.btn-primary Submit
+
+    // Login Box         
+    #loginBox.modal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-label='Close')
+              span(aria-hidden='true')
+                span.glyphicon.glyphicon-remove
+            span.ion.ion-person(style='float: left; font-size: 150%; margin: 5px 10px 0px 0px;')
+            h4(style='float:left') Login
+          .modal-body(style='height:400px !important;')
+            #loginbox.mainbox.col-md-12
+              .panel.panel-primary
+                .panel-heading
+                  .panel-title Sign In
+                  div(data-dismiss='modal', data-toggle='modal', data-target='#forgotPasswordBox', style='float:right; font-size: 80%; position: relative; top:-10px')
+                    a(href='#', style='color:white;') Forgot password?
+                .panel-body(style='padding-top:30px')
+                  #login-alert.alert.alert-danger.col-sm-12(style='display:none')
+                  form#loginform.form-horizontal(method='post' action="login")
+                    .form-group
+                      label.col-md-4.control-label(for='username') Username
+                      .col-md-7.col-md-offset-1
+                        input#pass.form-control(type='username', name='username', placeholder='Username')                   
+                    .form-group
+                      label.col-md-4.control-label(for='pass') Password
+                      .col-md-7.col-md-offset-1
+                        input#pass.form-control(type='password', name='pass', placeholder='Password...')
+                 
+                    .form-group
+                      .col-md-7.col-md-offset-4
+                        //a#btn-login.btn.btn-success(type='submit') Register 
+                        button#register1.btn.btn-warning(style='color:#555555;font-weight:bold;margin-left:35px;', type='submit') Login
+                        button#close.btn.btn-primary(style='font-weight:bold', type='button', data-dismiss='modal') Close
+
+
+    // Sign Up Box
+    #signUpBox.modal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-label='Close')
+              span(aria-hidden='true')
+                span.glyphicon.glyphicon-remove
+            span.ion.ion-person-add(style='float: left; font-size: 150%; margin: 5px 10px 0px 0px;')
+            h4(style='float:left') Sign Up
+          .modal-body
+            form#registrationForm.form-horizontal(method='post' action='/')
+              .form-group
+                label.control-label.col-md-4(for='fullname') Full Name
+                .col-md-7.col-md-offset-1
+                  input#name1.form-control(type='text', name='fname', placeholder='Full Name...')
+              .form-group
+                label.control-label.col-md-4(for='username') User Name
+                .col-md-7.col-md-offset-1
+                  input#last.form-control(type='text', name='username', placeholder='Username...')
+              .form-group
+                label.col-md-4.control-label(for='email') Email
+                .col-md-7.col-md-offset-1
+                  input#email.form-control(type='email', name='email', placeholder='Email...')
+              .form-group
+                label.col-md-4.control-label(for='pass') Password
+                .col-md-7.col-md-offset-1
+                  input#pass.form-control(type='password', name='pass', placeholder='Password...')
+              .form-group
+                label.col-md-4.control-label(for='imageURL') ImageURL
+                .col-md-7.col-md-offset-1
+                  input#pass.form-control(type='imageURL', name='imageURL', placeholder='Image URL')                  
+              .form-group
+                .col-md-7.col-md-offset-4
+                  //a#btn-login.btn.btn-success(type='submit') Register 
+                  button#register1.btn.btn-warning(style='color:#555555;font-weight:bold;margin-left:35px;', type='submit') Register
+                  button#close.btn.btn-primary(style='font-weight:bold', type='button', data-dismiss='modal') Close
