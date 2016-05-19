@@ -59,7 +59,7 @@ app.get('/', function(req, res){
   })
 });
 
-app.get('/products/:productID'), function(req, res) {
+app.get('/products/:productID', function(req, res) {
   var query = "SELECT * FROM products WHERE productID='" +
   parseInt(req.params.productID) + "';";
 
@@ -78,11 +78,11 @@ app.get('/products/:productID'), function(req, res) {
             message: 'successfully retrieved product'
           });
         }
-  });
+  })
 });
 
 //Register
-app.get('/register', function(req, res)){
+app.get('/register', function(req, res){
 
 });
 
