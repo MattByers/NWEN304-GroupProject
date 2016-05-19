@@ -11,7 +11,7 @@ $.ajax({
     		var searchString = $('#searchText').val();
         	$.ajax({
                 	url: "/products",
-                	type: "GET",
+                	type: "PUT",
                 	dataType: "json",
                 	data: {name: searchString}
 

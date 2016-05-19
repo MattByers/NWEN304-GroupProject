@@ -59,6 +59,33 @@ app.get('/products', function(req, res){
   })
 });
 
+app.put('/products', function(req, res){
+  var query = "SELECT * FROM products;";
+
+  if(req.body.name != null){
+    query = "SELECT * FROM products WHERE product_name='" + req.body.name + "';";
+  }
+
+  client.query(query, function (error, data) {
+
+    if(error) {
+      res.status(400).json({
+        status: 'failed',
+        message: 'failed to retrieve all products'
+      });
+    } else {
+      res.status(200)
+      .json({
+        status: 'success',
+        data: data.rows,
+        message: 'successfully retrieved all products'
+      });
+    }
+  })
+});
+
+
+
 app.get('/products/:productID', function(req, res) {
   var query = "SELECT * FROM products WHERE productID='" +
   parseInt(req.params.productID) + "';";
