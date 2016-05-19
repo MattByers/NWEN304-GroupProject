@@ -34,7 +34,7 @@ app.use(function(req, res, next) {
 app.use(express.static(__dirname + '/public'));
 
 //Initial browse page, will query the db for all products.
-app.get('/', function(req, res){
+app.get('/products', function(req, res){
   var query = "SELECT * FROM products;";
 
   if(req.body.name != null){
