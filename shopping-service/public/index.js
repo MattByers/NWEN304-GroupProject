@@ -35,7 +35,7 @@ $.ajax({
 
    function redraw(data){
             var taskHTML = '<img src ="';
-            
+
             taskHTML += data[0].imageurl;
             taskHTML += '"/>'
             var $newTask = $(taskHTML);

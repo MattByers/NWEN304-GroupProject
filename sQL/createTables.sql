@@ -1,7 +1,7 @@
 CREATE TABLE users(
-userID serial Primary Key, 
-username VARCHAR(64), 
-password VARCHAR(64),
+userID serial Primary Key,
+username VARCHAR(64),
+password VARCHAR(64),   /*The password digests will only be 60 chars, this can be changed*/
 email VARCHAR(64),
 first_name VARCHAR(32),
 last_name VARCHAR(32),
