@@ -135,29 +135,29 @@ app.put('/register', function(req, res){
   var address = req.body.address;
 
   //Check the username is not already in the database
-  var finished = false;
-  query = squel.select().from("users").where("username = '" + username + "'");
+  var finished = 0;
+  query = squel.select().from("users").where("username = '" + username + "'").toString();
   client.query(query, function(error, data){
-    console.log(data.command);
     if (error) {
+      finished = 1;
       res.status(400).json({
         status: 'failed',
         data: username,
         message: 'Invalid Syntax'
       });
-      finished = true;
     } else if(data.rowCount > 0) {
+      finished = 1;
       res.status(409).json({
         status: 'failed',
         data: username,
         message: 'username already exists'
       });
-      finished = true;
     }
   });
 
+  console.log(finished);
   //Bad request or username exists, break out
-  if(finished === true) {
+  if(finished === 1) {
     return;
   }
 
@@ -201,7 +201,7 @@ app.put('/login', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
 
-  query = squel.select().from('users').where("username = '" + username + "'");
+  query = squel.select().from('users').where("username = '" + username + "'").toString();
 
   client.query(query, function(error, data){
     if(error) {
@@ -217,15 +217,21 @@ app.put('/login', function(req, res){
         message: 'username not found'
       });
     } else {
-      res.status(200).json({
-        status: 'success',
-        data: data.rows,
-        message: 'Logged in successfully'
-      });
+
+      if(bcrypt.compareSync(password, data.rows[0].password)){
+        res.status(200).json({
+          status: 'success',
+          data: data.rows[0],
+          message: 'Logged in successfully'
+        });
+      } else {
+        res.status(401).json({
+          status: 'failed',
+          message: 'Incorrect password'
+        });
+      }
     }
   });
-
-
 });
 
 
