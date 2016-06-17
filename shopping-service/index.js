@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ // to support URL­encoded bodies
 }));
 
 //JWT Authorization setup - THIS SECRET HAS TO BE SET TO SOMETHING BETTER -
-app.use(expressJWT({secret: tokenSecret}).unless({ path: ['/login', '/register', '/products']}));
+//app.use(expressJWT({secret: tokenSecret}).unless({ path: ['/', '/public', '/login', '/register', '/products']}));
 
 //static setup
 app.use("/css", express.static(__dirname + '/css'));
