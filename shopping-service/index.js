@@ -1,4 +1,5 @@
 const SALT_ROUNDS = 10;
+const tokenSecret = 'i need to change this secret'; //PLEASE CHANGE ME SOON
 
 var port = process.env.PORT || 8080;
 var express = require('express');
@@ -7,9 +8,11 @@ var pg = require("pg").native;
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
 var squel = require('squel');
+var expressJWT = require('express-jwt');
+var jwt = require('jsonwebtoken');
 
 
-/*-------------------------------------------------- INITIAL SETUP --------------------------------------------------*/
+/*-------------------------------------------------- MIDDLEWARE SETUP --------------------------------------------------*/
 
 //Create the express app
 var app = express();
@@ -24,6 +27,9 @@ app.use( bodyParser.json() ); // to support JSON­encoded bodies
 app.use(bodyParser.urlencoded({ // to support URL­encoded bodies
   extended: true
 }));
+
+//JWT Authorization setup - THIS SECRET HAS TO BE SET TO SOMETHING BETTER -
+app.use(expressJWT({secret: tokenSecret}).unless({ path: ['/login', '/register', '/products']}));
 
 //static setup
 app.use("/css", express.static(__dirname + '/css'));
@@ -73,6 +79,7 @@ app.get('/products', function(req, res){
   })
 });
 
+//PUT request for filtering products by name, not happy with this, should change to a get request with parameters instead
 app.put('/products', function(req, res){
   var query = "SELECT * FROM products;";
   console.log("HIT")
@@ -98,7 +105,7 @@ app.put('/products', function(req, res){
 });
 
 
-
+//GET request for filtering products by ID, I need to do this for productname filtering ^^ too
 app.get('/products/:productID', function(req, res) {
   var query = "SELECT * FROM products WHERE productID='" +
   parseInt(req.params.productID) + "';";
@@ -120,7 +127,34 @@ app.get('/products/:productID', function(req, res) {
   })
 });
 
-//Register
+//POST request to create a new product, should probably be restricted to admins at some stage...
+app.post('/product', function(req, res) {
+  var productName = req.body.productName;
+  var productDesc = req.body.productDesc;
+  var price = req.body.price;
+
+  var query = squel.insert().into('products')
+                    .setFields({"product_name": productName, "product_description": productDesc, "price": price})
+                    .toString();
+
+  client.query(query, function(error, data){
+
+        if(error) {
+          res.status(400).json({
+            status: 'failed',
+            message: 'failed to create product',
+          });
+        } else {
+          res.status(201).json({
+            status: 'success',
+            message: 'successfully created product'
+          });
+        }
+  })
+});
+
+//PUT request wich supplies all necessary infromation (in the request body) to register a new user
+//Passwords are sent unhased, then salted and hashed to bbe stored in the DB, using bcrypt
 app.put('/register', function(req, res){
 
   console.log("Register method hit");
@@ -192,7 +226,7 @@ app.put('/register', function(req, res){
 
 });
 
-//login
+//PUT request to login based on the username and password supplied in the request body, passwords are sent unhashed
 app.put('/login', function(req, res){
   console.log("Login method hit");
 
@@ -217,11 +251,11 @@ app.put('/login', function(req, res){
         message: 'username not found'
       });
     } else {
-
       if(bcrypt.compareSync(password, data.rows[0].password)){
+        var userToken = jwt.sign({"username": username}, tokenSecret);
         res.status(200).json({
           status: 'success',
-          data: data.rows[0],
+          data: userToken,
           message: 'Logged in successfully'
         });
       } else {
