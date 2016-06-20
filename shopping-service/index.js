@@ -1,6 +1,9 @@
 const SALT_ROUNDS = 10;
 const tokenSecret = 'i need to change this secret'; //PLEASE CHANGE ME SOON
 
+
+/*-------------------------------------------------- MODULES --------------------------------------------------*/
+
 var port = process.env.PORT || 8080;
 var express = require('express');
 var path = require("path");
@@ -32,10 +35,11 @@ app.use(bodyParser.urlencoded({ // to support URL­encoded bodies
 //app.use(expressJWT({secret: tokenSecret}).unless({ path: ['/', '/public', '/login', '/register', '/products']}));
 
 //static setup
-app.use("/css", express.static(__dirname + '/css'));
-app.use("/js", express.static(__dirname + '/js'));
-app.use("/fonts", express.static(__dirname + '/fonts'));
-app.use(express.static(__dirname + '/public'));
+//app.use("/css", express.static(__dirname + '/css'));
+//app.use("/js", express.static(__dirname + '/js'));
+//app.use("/fonts", express.static(__dirname + '/fonts'));
+//app.use(express.static(__dirname + '/public'));
+app.use('/', express.static('public'));
 
 //Header setup
 app.use(function(req, res, next) {
