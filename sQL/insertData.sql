@@ -1,7 +1,7 @@
 INSERT INTO product_types(product_type) VALUES
 ('Pear'),('Apple'),('Orange'),('Banana');
 
-INSERT INTO products(product_name, product_description, price, imageURL) VALUES 
+INSERT INTO products(product_name, product_description, , product_type, price, imageURL) VALUES 
 ('Green Anjou', 'Sweetly mellow with a smooth and juicy texture, this is the kind of pear to eat for breakfast', 'Pear', '12.50', 'http://www.saveur.com/sites/saveur.com/files/styles/large_1x_/public/import/2010/images/2010-12/7-TASTING_NOTES-PEARS-ANJOU.jpg?itok=xdqcq3aN'),
 ('Red Anjou', 'Similar in size and texture to its green cousin, the Red Anjou is sweeter and milder, with subtle hints of sweet spice replacing the Green Anjous citrus notes', 'Pear' '10.00', 'http://usapears.org/wp-content/uploads/2015/04/red-anjou-pear.jpg'),
 ('Bosc', 'Bosc pears have a more firm, dense flesh than other pear varieties, so they are ideal for use in baking, broiling or poaching', ' Pear', '11.00', 'http://usapears.org/wp-content/uploads/2011/12/bosc-pear.jpg'),

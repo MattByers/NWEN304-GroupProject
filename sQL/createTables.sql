@@ -17,6 +17,7 @@ product_name VARCHAR(64),
 product_description VARCHAR(2048),
 product_type VARCHAR(64),
 price INT,
+imageURL VARCHAR(256),
 CONSTRAINT fk_producttype FOREIGN KEY (product_type) REFERENCES 
 product_types(product_type)
 );
