@@ -16,7 +16,7 @@ productID serial Primary Key,
 product_name VARCHAR(64),
 product_description VARCHAR(2048),
 product_type VARCHAR(64),
-price INT,
+price DECIMAL(6,2),
 imageURL VARCHAR(256),
 CONSTRAINT fk_producttype FOREIGN KEY (product_type) REFERENCES 
 product_types(product_type)
