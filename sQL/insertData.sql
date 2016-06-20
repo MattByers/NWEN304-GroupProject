@@ -1,4 +1,4 @@
-INSERT INTO product_type(product_type) VALUES
+INSERT INTO product_types(product_type) VALUES
 ('Pear'),('Apple'),('Orange'),('Banana');
 
 INSERT INTO products(product_name, product_description, price, imageURL) VALUES 
