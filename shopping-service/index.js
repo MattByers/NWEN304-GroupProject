@@ -2,7 +2,10 @@ const SALT_ROUNDS = 10;
 const tokenSecret = 'i need to change this secret'; //PLEASE CHANGE ME SOON
 
 
+
 /*-------------------------------------------------- MODULES --------------------------------------------------*/
+
+
 
 var port = process.env.PORT || 8080;
 var express = require('express');
@@ -15,7 +18,10 @@ var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
 
 
+
 /*-------------------------------------------------- MIDDLEWARE SETUP --------------------------------------------------*/
+
+
 
 //Create the express app
 var app = express();
@@ -33,6 +39,7 @@ app.use(bodyParser.urlencoded({ // to support URL­encoded bodies
 
 //JWT Authorization setup - THIS SECRET HAS TO BE SET TO SOMETHING BETTER -
 //app.use(expressJWT({secret: tokenSecret}).unless({ path: ['/', '/public', '/login', '/register', '/products']}));
+//I've decided I will only protect the API routes I want, instead of using this unless syntax, which is bugging my static page.
 
 //static setup
 //app.use("/css", express.static(__dirname + '/css'));
@@ -56,39 +63,20 @@ app.use(function(req, res, next) {
 
 /*-------------------------------------------------- RESTFUL API --------------------------------------------------*/
 
-//TODO: Replace all manually constructed SQL queries with squel ones
+/* REQUESTS RELATING TO MULTIPLE PRODUCTS :-- '/products' */
 
-//GET Request for products
-app.get('/products', function(req, res){
-  var query = "SELECT * FROM products;";
+//REMOVED the GET REQUEST here as it's functionality is covered by the PUT REQUEST below.
 
-  if(req.body.name != null){
-    query = "SELECT * FROM products WHERE product_name='" + req.body.name + "';";
-  }
-
-  client.query(query, function (error, data) {
-
-    if(error) {
-      res.status(400).json({
-        status: 'failed',
-        message: 'failed to retrieve all products'
-      });
-    } else {
-      res.status(200).json({
-        status: 'success',
-        data: data.rows,
-        message: 'successfully retrieved all products'
-      });
-    }
-  })
-});
-
-//PUT request for filtering products by name, not happy with this, should change to a get request with parameters instead
+//PUT request for filtering products by various catergories, body is used to parse filter information
 app.put('/products', function(req, res){
   var query = "SELECT * FROM products;";
   console.log("HIT")
   if(req.body.name != null){
     query = "SELECT * FROM products WHERE product_name='" + req.body.name + "';";
+  } else if (req.body.search != null) {
+    //find all products that relate to a search term, will likely replace the above statement. ALSO not sure how to do this...
+  } else if (req.body.productType != null) {
+    //find all products of a specific catergory
   }
 
   client.query(query, function (error, data) {
@@ -109,8 +97,10 @@ app.put('/products', function(req, res){
 });
 
 
-//GET request for filtering products by ID, I need to do this for productname filtering ^^ too
-app.get('/products/:productID', function(req, res) {
+/* REQUESTS RELATING TO A SINGLE PRODUCT :-- '/product' */
+
+//GET request for filtering product by ID, I need to do this for productname filtering ^^ too
+app.get('/product/:productID', function(req, res) {
   var query = "SELECT * FROM products WHERE productID='" +
   parseInt(req.params.productID) + "';";
 
@@ -270,6 +260,12 @@ app.put('/login', function(req, res){
       }
     }
   });
+});
+
+
+//GET REQUEST to get user details, if the user is authenticated
+app.get('/user', expressJWT({secret: tokenSecret}), function(req, res){
+  
 });
 
 
