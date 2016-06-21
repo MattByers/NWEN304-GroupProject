@@ -1,45 +1,35 @@
-// $(document).ready(function (e) {
-// var ERROR_LOG = console.error.bind(console);
+// Docs at http://simpleweatherjs.com
 
-// $.ajax({
+/* Does your browser support geolocation? */
+if ("geolocation" in navigator) {
+  $('.js-geolocation').show(); 
+} else {
+  $('.js-geolocation').hide();
+}
 
-//     url: "/products",
-//     type: "GET",
-
-//     success: function(result){
-//           redraw(result.data);
-//     }
-
-// });
+/* Where in the world are you? */
+$('.js-geolocation').on('click', function() {
+  navigator.geolocation.getCurrentPosition(function(position) {
+    loadWeather(position.coords.latitude+','+position.coords.longitude); //load weather using your lat/lng coordinates
+  });
+});
 
 
-
-// //Create a new task todo
-//     $('#searchButton').on('click', function(){
-
-//     		var searchString = $('#searchText').val();
-//         	$.ajax({
-//                 	url: "/products",
-//                 	type: "PUT",
-//                 	dataType: "json",
-//                 	data: {name: searchString},
-
-//                 	success: function(result){
-//                 		redraw(result.data);
-//                 	},
-//                 	error: function(result){
-//                 		alert("This isnt working");
-//                 	}
-
-//     });});
-
-//    function redraw(data){
-//             var taskHTML = '<img src ="';
-
-//             taskHTML += data[0].imageurl;
-//             taskHTML += '"/>'
-//             var $newTask = $(taskHTML);
-//             $('#display').prepend($newTask);
-//     }
-
-// });
+$(document).ready(function() {
+  $.simpleWeather({
+    location: 'Wellington, NZ',
+    woeid: '',
+    unit: 'f',
+    success: function(weather) {
+      html = '<h2><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+'</h2>';
+      html += '<ul><li>'+weather.region+'</li>';
+      html += '<li class="currently">'+weather.currently+'</li>';
+      html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li></ul>';
+  
+      $("#weather").html(html);
+    },
+    error: function(error) {
+      $("#weather").html('<p>'+error+'</p>');
+    }
+  });
+}); 
