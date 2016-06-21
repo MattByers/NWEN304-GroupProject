@@ -68,15 +68,41 @@ app.use(function(req, res, next) {
 //REMOVED the GET REQUEST here as it's functionality is covered by the PUT REQUEST below.
 
 //PUT request for filtering products by various catergories, body is used to parse filter information
-app.put('/products', function(req, res){
+// app.put('/products', function(req, res){
+//   var query = "SELECT * FROM products;";
+
+//   if(req.body.name != null){
+//     query = "SELECT * FROM products WHERE product_name='" + req.body.name + "';";
+//   } else if (req.body.search != null) {
+//     //find all products that relate to a search term, will likely replace the above statement. ALSO not sure how to do this...
+//   } else if (req.body.productType != null) {
+//     //find all products of a specific catergory
+//   }
+
+//   client.query(query, function (error, data) {
+
+//     if(error) {
+//       res.status(400).json({
+//         status: 'failed',
+//         message: 'failed to retrieve all products'
+//       });
+//     } else {
+//       res.status(200).json({
+//         status: 'success',
+//         data: data.rows,
+//         message: 'successfully retrieved all products'
+//       });
+//     }
+//   })
+// });
+
+//Using a simple get request, will update when using search/categorise (If we need to its not actually a requirement)
+//GET Request for products
+app.get('/api/products', function(req, res){
   var query = "SELECT * FROM products;";
-  console.log("HIT")
+
   if(req.body.name != null){
     query = "SELECT * FROM products WHERE product_name='" + req.body.name + "';";
-  } else if (req.body.search != null) {
-    //find all products that relate to a search term, will likely replace the above statement. ALSO not sure how to do this...
-  } else if (req.body.productType != null) {
-    //find all products of a specific catergory
   }
 
   client.query(query, function (error, data) {
@@ -87,11 +113,7 @@ app.put('/products', function(req, res){
         message: 'failed to retrieve all products'
       });
     } else {
-      res.status(200).json({
-        status: 'success',
-        data: data.rows,
-        message: 'successfully retrieved all products'
-      });
+      res.status(200).json(data.rows);
     }
   })
 });
@@ -99,10 +121,11 @@ app.put('/products', function(req, res){
 
 /* REQUESTS RELATING TO A SINGLE PRODUCT :-- '/product' */
 
+//Changed slightly, still works the same
 //GET request for filtering product by ID, I need to do this for productname filtering ^^ too
-app.get('/product/:productID', function(req, res) {
+app.get('/api/products/:id', function(req, res) {
   var query = "SELECT * FROM products WHERE productID='" +
-  parseInt(req.params.productID) + "';";
+  parseInt(req.params.id) + "';";
 
   client.query(query, function(error, data){
 
@@ -112,11 +135,7 @@ app.get('/product/:productID', function(req, res) {
             message: 'failed to retrieve product'
           });
         } else {
-          res.status(200).json({
-            status: 'success',
-            data: data.rows,
-            message: 'successfully retrieved product'
-          });
+          res.status(200).json(data.rows[0]);
         }
   })
 });
