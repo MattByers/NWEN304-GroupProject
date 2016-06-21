@@ -1,45 +1,45 @@
-$(document).ready(function (e) {
-var ERROR_LOG = console.error.bind(console);
+// $(document).ready(function (e) {
+// var ERROR_LOG = console.error.bind(console);
 
-$.ajax({
+// $.ajax({
 
-    url: "/products",
-    type: "GET",
+//     url: "/products",
+//     type: "GET",
 
-    success: function(result){
-          redraw(result.data);
-    }
+//     success: function(result){
+//           redraw(result.data);
+//     }
 
-});
+// });
 
 
 
-//Create a new task todo
-    $('#searchButton').on('click', function(){
+// //Create a new task todo
+//     $('#searchButton').on('click', function(){
 
-    		var searchString = $('#searchText').val();
-        	$.ajax({
-                	url: "/products",
-                	type: "PUT",
-                	dataType: "json",
-                	data: {name: searchString},
+//     		var searchString = $('#searchText').val();
+//         	$.ajax({
+//                 	url: "/products",
+//                 	type: "PUT",
+//                 	dataType: "json",
+//                 	data: {name: searchString},
 
-                	success: function(result){
-                		redraw(result.data);
-                	},
-                	error: function(result){
-                		alert("This isnt working");
-                	}
+//                 	success: function(result){
+//                 		redraw(result.data);
+//                 	},
+//                 	error: function(result){
+//                 		alert("This isnt working");
+//                 	}
 
-    });});
+//     });});
 
-   function redraw(data){
-            var taskHTML = '<img src ="';
+//    function redraw(data){
+//             var taskHTML = '<img src ="';
 
-            taskHTML += data[0].imageurl;
-            taskHTML += '"/>'
-            var $newTask = $(taskHTML);
-            $('#display').prepend($newTask);
-    }
+//             taskHTML += data[0].imageurl;
+//             taskHTML += '"/>'
+//             var $newTask = $(taskHTML);
+//             $('#display').prepend($newTask);
+//     }
 
-});
+// });

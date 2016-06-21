@@ -1,0 +1,13 @@
+<div class="container">
+<div class="row">
+<div class="row" ng-controller="ProductsIndexController">
+  <div ng-repeat="product in products">
+    <div class="col-xs-3">
+    <a ng-click="goToProduct($event, product.productid)" href="javascript:;">
+        <img style="border: 1px solid black" width="300" height="300" ng-src="{{product.imageurl}}" />              
+    </a>
+    </div>
+  </div>
+</div>
+</div>
+</div>

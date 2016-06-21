@@ -1,142 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="ProductsService">
   <head>
-  <link href="stylesheets/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" type="text/css" href="stylesheets/style.css"/>
-  <script src="//code.jquery.com/jquery-1.11.0.min.js">
-  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-   <script src="index.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-</script>
-  <body>
-  <nav class="navbar navbar-light bg-solid">
-  <a class="navbar-brand" href="#">Fruit Shop</a>
-  <ul class="nav navbar-nav">
-    <li class="nav-item active">
-      <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-    </li>
-    <li data-toggle="modal" data-target="#loginBox"><a href="#login"><span style="margin-right:5px; font-size:120%;" class="ion ion-person"></span>Login</a></li>
-    <li data-toggle="modal" data-target="#signUpBox" style="cursor:pointer;"><a><span style="margin-right:5px; font-size:120%;" class="ion ion-person-add"></span>Sign Up</a></li>
-  </ul>
+    <link href="stylesheets/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css"/>
+    <body>
 
-<div id="loginBox" class="modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button><span style="float: left; font-size: 150%; margin: 5px 10px 0px 0px;" class="ion ion-person"></span>
-        <h4 style="float:left">Login</h4>
-      </div>
-      <div style="height:400px !important;" class="modal-body">
-        <div id="loginbox" class="mainbox col-md-12">
-          <div class="panel panel-primary">
-            <div class="panel-heading">
-              <div class="panel-title">Sign In</div>
-              <div data-dismiss="modal" data-toggle="modal" data-target="#forgotPasswordBox" style="float:right; font-size: 80%; position: relative; top:-10px"><a href="#" style="color:white;">Forgot password?</a></div>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button aria-controls="navbar" aria-expanded="false" class=
+                "navbar-toggle collapsed" data-target="#navbar" data-toggle=
+                "collapse" type="button"><span class="sr-only">Toggle
+                navigation</span> <span class="icon-bar"></span> <span class=
+                "icon-bar"></span> <span class="icon-bar"></span></button>
+                <a class="navbar-brand" href="#">Fruit Shop</a>
             </div>
-            <div style="padding-top:30px" class="panel-body">
-              <div id="login-alert" style="display:none" class="alert alert-danger col-sm-12"></div>
-              <form id="loginform" method="post" action="login" class="form-horizontal">
-                <div class="form-group">
-                  <label for="username" class="col-md-4 control-label">Username</label>
-                  <div class="col-md-7 col-md-offset-1">
-                    <input id="pass" type="username" name="username" placeholder="Username" class="form-control"/>
+            <div class="navbar-collapse collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#/products">Products</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li data-target="#loginBox" data-toggle="modal">
+                        <a href="#login"><span class="ion ion-person" style=
+                        "margin-right:5px; font-size:120%;"></span>Login</a>
+                    </li>
+                    <li data-target="#signUpBox" data-toggle="modal" style=
+                    "cursor:pointer;">
+                        <a><span class="ion ion-person-add" style=
+                        "margin-right:5px; font-size:120%;"></span>Sign Up</a>
+                    </li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+    </nav>
+
+        <div id="loginBox" class="modal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button><span style="float: left; font-size: 150%; margin: 5px 10px 0px 0px;" class="ion ion-person"></span>
+                <h4 style="float:left">Login</h4>
+              </div>
+              <div style="height:400px !important;" class="modal-body">
+                <div id="loginbox" class="mainbox col-md-12">
+                  <div class="panel panel-primary">
+                    <div class="panel-heading">
+                      <div class="panel-title">Sign In</div>
+                      <div data-dismiss="modal" data-toggle="modal" data-target="#forgotPasswordBox" style="float:right; font-size: 80%; position: relative; top:-10px"><a href="#" style="color:white;">Forgot password?</a></div>
+                    </div>
+                    <div style="padding-top:30px" class="panel-body">
+                      <div id="login-alert" style="display:none" class="alert alert-danger col-sm-12"></div>
+                      <form id="loginform" method="post" action="login" class="form-horizontal">
+                        <div class="form-group">
+                          <label for="username" class="col-md-4 control-label">Username</label>
+                          <div class="col-md-7 col-md-offset-1">
+                            <input id="pass" type="username" name="username" placeholder="Username" class="form-control"/>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="pass" class="col-md-4 control-label">Password</label>
+                          <div class="col-md-7 col-md-offset-1">
+                            <input id="pass" type="password" name="pass" placeholder="Password..." class="form-control"/>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-md-7 col-md-offset-4">
+                            <!--a#btn-login.btn.btn-success(type='submit') Register -->
+                            <button id="register1" style="color:#555555;font-weight:bold;margin-left:35px;" type="submit" class="btn btn-success">Login</button>
+                            <button id="close" style="font-weight:bold" type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="pass" class="col-md-4 control-label">Password</label>
-                  <div class="col-md-7 col-md-offset-1">
-                    <input id="pass" type="password" name="pass" placeholder="Password..." class="form-control"/>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-md-7 col-md-offset-4">
-                    <!--a#btn-login.btn.btn-success(type='submit') Register -->
-                    <button id="register1" style="color:#555555;font-weight:bold;margin-left:35px;" type="submit" class="btn btn-success">Login</button>
-                    <button id="close" style="font-weight:bold" type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
-                  </div>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
+        <div id="signUpBox" class="modal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button><span style="float: left; font-size: 150%; margin: 5px 10px 0px 0px;" class="ion ion-person-add"></span>
+                <h4 style="float:left">Sign Up</h4>
+              </div>
+              <div class="modal-body">
+                <form id="registrationForm" method="post" action="/" class="form-horizontal">
+                  <div class="form-group">
+                    <label for="fullname" class="control-label col-md-4">Full Name</label>
+                    <div class="col-md-7 col-md-offset-1">
+                      <input id="name1" type="text" name="fname" placeholder="Full Name..." class="form-control"/>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="username" class="control-label col-md-4">User Name</label>
+                    <div class="col-md-7 col-md-offset-1">
+                      <input id="last" type="text" name="username" placeholder="Username..." class="form-control"/>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="email" class="col-md-4 control-label">Email</label>
+                    <div class="col-md-7 col-md-offset-1">
+                      <input id="email" type="email" name="email" placeholder="Email..." class="form-control"/>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="pass" class="col-md-4 control-label">Password</label>
+                    <div class="col-md-7 col-md-offset-1">
+                      <input id="pass" type="password" name="pass" placeholder="Password..." class="form-control"/>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="imageURL" class="col-md-4 control-label">ImageURL</label>
+                    <div class="col-md-7 col-md-offset-1">
+                      <input id="pass" type="imageURL" name="imageURL" placeholder="Image URL" class="form-control"/>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-md-7 col-md-offset-4">
+                      <!--a#btn-login.btn.btn-success(type='submit') Register -->
+                      <button id="register1" style="color:#555555;font-weight:bold;margin-left:35px;" type="submit" class="btn btn-warning">Register</button>
+                      <button id="close" style="font-weight:bold" type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+  
+      <div id="display" title="Item Display">
+
       </div>
-    </div>
-  </div>
-</div>
 
-<div id="signUpBox" class="modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button><span style="float: left; font-size: 150%; margin: 5px 10px 0px 0px;" class="ion ion-person-add"></span>
-        <h4 style="float:left">Sign Up</h4>
-      </div>
-      <div class="modal-body">
-        <form id="registrationForm" method="post" action="/" class="form-horizontal">
-          <div class="form-group">
-            <label for="fullname" class="control-label col-md-4">Full Name</label>
-            <div class="col-md-7 col-md-offset-1">
-              <input id="name1" type="text" name="fname" placeholder="Full Name..." class="form-control"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="username" class="control-label col-md-4">User Name</label>
-            <div class="col-md-7 col-md-offset-1">
-              <input id="last" type="text" name="username" placeholder="Username..." class="form-control"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="email" class="col-md-4 control-label">Email</label>
-            <div class="col-md-7 col-md-offset-1">
-              <input id="email" type="email" name="email" placeholder="Email..." class="form-control"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="pass" class="col-md-4 control-label">Password</label>
-            <div class="col-md-7 col-md-offset-1">
-              <input id="pass" type="password" name="pass" placeholder="Password..." class="form-control"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="imageURL" class="col-md-4 control-label">ImageURL</label>
-            <div class="col-md-7 col-md-offset-1">
-              <input id="pass" type="imageURL" name="imageURL" placeholder="Image URL" class="form-control"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-md-7 col-md-offset-4">
-              <!--a#btn-login.btn.btn-success(type='submit') Register -->
-              <button id="register1" style="color:#555555;font-weight:bold;margin-left:35px;" type="submit" class="btn btn-warning">Register</button>
-              <button id="close" style="font-weight:bold" type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+      <div ng-view></div>
 
+      
 
-
-
-
-  <form id = "searchBox" class="form-inline pull-xs-right navbar-right">
-    <input id = "searchText" class="form-control" type="text" placeholder="Search">
-    <button id = "searchButton" class="btn btn-success-outline" type="button" action="/product">Search</button>
-  </form
-  </nav>
-
-
-  <div id="display" title="Item Display">
-
-    <p><label for="task">Searched Item</label></p>
-  </div>
-
-
-
-
-
-  </body>
+      <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+      <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-resource.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-route.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      <script src="products-service.js"></script>
+    </body>
   </head>
