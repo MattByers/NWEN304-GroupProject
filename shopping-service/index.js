@@ -294,24 +294,41 @@ app.get('/user', expressJWT({secret: tokenSecret}), function(req, res){
   });
 });
 
-//POST request to create a new cart for a logged in user.
+//POST request to add to or create a new cart if the user is logged in.
 app.post('/cart', expressJWT({secret: tokenSecret}), function(req, res){
+
   var username = getUserFromToken(req);
 
   var productID = req.body.productID;
   var quantity = req.body.quantity;
 
-  var query = squel.insert().into('carts').setFields({'username': username, 'productid': productID, 'quantity': quantity}).toString();
-  client.query(query, function(data, error){
+  var query = squel.update().table('carts').set("quantity = quantity + " + quantity).where("username = '" + username + "'").where("productid = " + productID).toString();
+  client.query(query, function(error, data){
     if(error) {
       res.status(400).json({
         status: 'failed',
-        message: 'Authorization error'
+        message: 'Invalid data'
+      });
+    } else if(data.rowCount < 1){
+      query = squel.insert().into('carts').setFields({'username': username, 'productid': productID, 'quantity': quantity}).toString();
+      client.query(query, function(error, data){
+        if(error) {
+          res.status(400).json({
+            status: 'failed',
+            message: 'Invalid data'
+          });
+        } else {
+          res.status(201).json({
+            status: 'success',
+            message: 'Successfully created new cart item'
+          });
+        }
       });
     } else {
-      res.status(200).json({
+      res.status(201).json({
         status: 'success',
-        message: 'Successfully added product to users cart'
+        message: 'Successfully updated quantity of item in users cart'
+      });
     }
   });
 });
@@ -325,7 +342,7 @@ app.put('/cart', expressJWT({secret: tokenSecret}), function(req, res){
 app.get('/cart', expressJWT({secret: tokenSecret}), function(req, res){
   var username = getUserFromToken(req);
   var query = squel.select().from('carts').where("username = '" + username + "'").toString();
-  client.query(query, function(data, error){
+  client.query(query, function(error, data){
     if(error) {
       res.status(400).json({
         status: 'failed',
@@ -336,6 +353,7 @@ app.get('/cart', expressJWT({secret: tokenSecret}), function(req, res){
         status: 'success',
         data: data.rows,
         message: 'Successfully retrieved user cart'
+      });
     }
   });
 });
