@@ -186,57 +186,49 @@ app.put('/register', function(req, res){
   query = squel.select().from("users").where("username = '" + username + "'").toString();
   client.query(query, function(error, data){
     if (error) {
-      finished = 1;
       res.status(400).json({
         status: 'failed',
         data: username,
         message: 'Invalid Syntax'
       });
     } else if(data.rowCount > 0) {
-      finished = 1;
       res.status(409).json({
         status: 'failed',
         data: username,
         message: 'username already exists'
       });
-    }
-  });
-
-  console.log(finished);
-  //Bad request or username exists, break out
-  if(finished === 1) {
-    return;
-  }
-
-  //Use bcrypt to automatically salt and hash passwords
-  var passwordDigest = bcrypt.hashSync(password, SALT_ROUNDS);
-
-  //Create the sql statement and insert the new user
-  query = squel.insert().into("users")
-              .setFields({"username": username,
-              "password": passwordDigest,
-              "email": email,
-              "first_name": firstName,
-              "last_name": lastName,
-              "address": address
-              }).toString();
-
-  client.query(query, function(error){
-    if(error){
-      res.status(400).json({
-        status: 'failed',
-        data: username,
-        message: 'Invalid Syntax'
-      });
     } else {
-      res.status(201).json({
-          status: 'success',
-          data: username,
-          message: 'Successfully created user'
+      //Use bcrypt to automatically salt and hash passwords
+      var passwordDigest = bcrypt.hashSync(password, SALT_ROUNDS);
+
+      //Create the sql statement and insert the new user
+      query = squel.insert().into("users")
+                  .setFields({"username": username,
+                  "password": passwordDigest,
+                  "email": email,
+                  "first_name": firstName,
+                  "last_name": lastName,
+                  "address": address
+                  }).toString();
+
+      client.query(query, function(error){
+        if(error){
+          res.status(400).json({
+            status: 'failed',
+            data: username,
+            message: 'Invalid Syntax'
+          });
+        } else {
+          var userToken = jwt.sign({"username": username}, tokenSecret);
+          res.status(201).json({
+              status: 'success',
+              data: userToken,
+              message: 'Successfully created user'
+          });
+        }
       });
     }
-  });
-
+  }); //Eww........
 });
 
 //PUT request to login based on the username and password supplied in the request body, passwords are sent unhashed
@@ -257,7 +249,7 @@ app.put('/login', function(req, res){
         data: username,
         message: 'Invalid Syntax'
       });
-    } else if(data.rows == null){
+    } else if(data.rows[0] == null){
       res.status(400).json({
         status: 'failed',
         data: username,
@@ -268,7 +260,7 @@ app.put('/login', function(req, res){
         var userToken = jwt.sign({"username": username}, tokenSecret);
         res.status(200).json({
           status: 'success',
-          data: userToken,
+          data: userToken, //This user token should be stored client side and passed back to the server on authorized requests.
           message: 'Logged in successfully'
         });
       } else {
@@ -284,9 +276,80 @@ app.put('/login', function(req, res){
 
 //GET REQUEST to get user details, if the user is authenticated
 app.get('/user', expressJWT({secret: tokenSecret}), function(req, res){
-  
+  var username = getUserFromToken(req);
+  var query = squel.select().from('users').where("username = '" + username + "'").toString();
+  client.query(query, function(error, data) {
+    if (error) {
+      res.status(400).json({
+        status: 'failed',
+        message: 'Authorization error'
+      });
+    } else {
+      res.status(200).json({
+        status: 'success',
+        data: data.rows[0],
+        message: 'Successfully retrieved user info'
+      });
+    }
+  });
 });
 
+//POST request to create a new cart for a logged in user.
+app.post('/cart', expressJWT({secret: tokenSecret}), function(req, res){
+  var username = getUserFromToken(req);
 
+  var productID = req.body.productID;
+  var quantity = req.body.quantity;
 
-app.listen(8080);
+  var query = squel.insert().into('carts').setFields({'username': username, 'productid': productID, 'quantity': quantity}).toString();
+  client.query(query, function(data, error){
+    if(error) {
+      res.status(400).json({
+        status: 'failed',
+        message: 'Authorization error'
+      });
+    } else {
+      res.status(200).json({
+        status: 'success',
+        message: 'Successfully added product to users cart'
+    }
+  });
+});
+
+//PUT request to add an item to the already created cart of a logged in user.
+app.put('/cart', expressJWT({secret: tokenSecret}), function(req, res){
+
+});
+
+//GET request to retreive the contents of a logged in user's cart.
+app.get('/cart', expressJWT({secret: tokenSecret}), function(req, res){
+  var username = getUserFromToken(req);
+  var query = squel.select().from('carts').where("username = '" + username + "'").toString();
+  client.query(query, function(data, error){
+    if(error) {
+      res.status(400).json({
+        status: 'failed',
+        message: 'Authorization error'
+      });
+    } else {
+      res.status(200).json({
+        status: 'success',
+        data: data.rows,
+        message: 'Successfully retrieved user cart'
+    }
+  });
+});
+
+//Given a request obkect, this function will return the user who made the request based on the JWT
+var getUserFromToken = function(req){
+  //Code from the express-jwt documentation
+  var toReturn;
+  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+    var token = req.headers.authorization.split(' ')[1];
+    var decodedToken = jwt.decode(token);
+    toReturn = decodedToken.username;
+  }
+  return toReturn;
+};
+
+app.listen(port);
