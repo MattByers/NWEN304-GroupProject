@@ -24,7 +24,7 @@
                         <a class="nav-link" href="#/products">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#/products">Recommended</a>
+                        <a class="nav-link" href="#/recommend">Recommended</a>
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -86,6 +86,7 @@
             </div>
           </div>
         </div>
+
         <div id="signUpBox" class="modal">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -94,17 +95,23 @@
                 <h4 style="float:left">Sign Up</h4>
               </div>
               <div class="modal-body">
-                <form id="registrationForm" method="post" action="/" class="form-horizontal">
+                <form id="registrationForm" method="put" action="/register" class="form-horizontal">
                   <div class="form-group">
-                    <label for="fullname" class="control-label col-md-4">Full Name</label>
+                    <label for="firstName" class="control-label col-md-4">First Name</label>
                     <div class="col-md-7 col-md-offset-1">
-                      <input id="name1" type="text" name="fname" placeholder="Full Name..." class="form-control"/>
+                      <input id="firstName" type="text" name="firstName" placeholder="First Name..." class="form-control"/>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="lastName" class="control-label col-md-4">Last Name</label>
+                    <div class="col-md-7 col-md-offset-1">
+                      <input id="lastName" type="text" name="lastName" placeholder="Last Name..." class="form-control"/>
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="username" class="control-label col-md-4">User Name</label>
                     <div class="col-md-7 col-md-offset-1">
-                      <input id="last" type="text" name="username" placeholder="Username..." class="form-control"/>
+                      <input id="username" type="text" name="username" placeholder="Username..." class="form-control"/>
                     </div>
                   </div>
                   <div class="form-group">
@@ -114,15 +121,9 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="pass" class="col-md-4 control-label">Password</label>
+                    <label for="password" class="col-md-4 control-label">Password</label>
                     <div class="col-md-7 col-md-offset-1">
-                      <input id="pass" type="password" name="pass" placeholder="Password..." class="form-control"/>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="imageURL" class="col-md-4 control-label">ImageURL</label>
-                    <div class="col-md-7 col-md-offset-1">
-                      <input id="pass" type="imageURL" name="imageURL" placeholder="Image URL" class="form-control"/>
+                      <input id="password" type="password" name="password" placeholder="Password..." class="form-control"/>
                     </div>
                   </div>
                   <div class="form-group">

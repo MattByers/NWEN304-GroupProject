@@ -177,7 +177,7 @@ app.put('/register', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
   var email = req.body.email;
-  var firstName = req.body.fistName;
+  var firstName = req.body.firstName;
   var lastName =req.body.lastName;
   var address = req.body.address;
 
