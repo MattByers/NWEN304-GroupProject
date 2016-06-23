@@ -1,13 +1,14 @@
 const SALT_ROUNDS = 10;
-const tokenSecret = 'i need to change this secret'; //PLEASE CHANGE ME SOON
+const TOKEN_SECRET = 'i need to change this secret'; //PLEASE CHANGE ME SOON
 
+const CLIENT_ID = "200550010387-2c1acifvq3n1k1s4v4um3g1f67g6lp8n.apps.googleusercontent.com";
+const CLIENT_SECRET = "nsI7yxIyuc65RiSi2ggqCjq2";
 
+var port = process.env.PORT || 8080;
 
 /*-------------------------------------------------- MODULES --------------------------------------------------*/
 
 
-
-var port = process.env.PORT || 8080;
 var express = require('express');
 var path = require("path");
 var pg = require("pg").native;
@@ -16,6 +17,7 @@ var bcrypt = require('bcrypt');
 var squel = require('squel');
 var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
+var googleapis = require('googleapis');
 
 
 
@@ -38,8 +40,19 @@ app.use(bodyParser.urlencoded({ // to support URL­encoded bodies
 }));
 
 //JWT Authorization setup - THIS SECRET HAS TO BE SET TO SOMETHING BETTER -
-//app.use(expressJWT({secret: tokenSecret}).unless({ path: ['/', '/public', '/login', '/register', '/products']}));
+//app.use(expressJWT({secret: TOKEN_SECRET}).unless({ path: ['/', '/public', '/login', '/register', '/products']}));
 //I've decided I will only protect the API routes I want, instead of using this unless syntax, which is bugging my static page.
+
+var plus = googleapis.plus('v1');
+var OAuth2 = googleapis.auth.OAuth2;
+var oauth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, "http://localhost:8080/oauthcallback");
+var scopes = ["https://www.googleapis.com/auth/plus.me"];
+var oAuthUrl = oauth2Client.generateAuthUrl({
+  access_type: 'offline',
+  scope: scopes
+});
+
+
 
 //static setup
 //app.use("/css", express.static(__dirname + '/css'));
@@ -62,6 +75,27 @@ app.use(function(req, res, next) {
 
 
 /*-------------------------------------------------- RESTFUL API --------------------------------------------------*/
+
+
+
+app.get('/google', function(req, res) {
+  res.redirect(oAuthUrl);
+});
+
+app.get('/oauthcallback', function(req, res){
+  var code = req.query.code;
+  oauth2Client.getToken(code, function(error, tokens){
+    if(!error) {
+      console.log(tokens);
+      oauth2Client.setCredentials(tokens);
+    }
+  });
+  plus.people.get({userId: 'me', auth: oauth2Client}, function(error, profile){
+    res.send(profile.displayName);
+  });
+
+});
+
 
 /* REQUESTS RELATING TO MULTIPLE PRODUCTS :-- '/products' */
 
@@ -118,7 +152,6 @@ app.get('/api/products', function(req, res){
   })
 });
 
-
 /* REQUESTS RELATING TO A SINGLE PRODUCT :-- '/product' */
 
 //Changed slightly, still works the same
@@ -168,7 +201,7 @@ app.post('/product', function(req, res) {
 
 //PUT request wich supplies all necessary infromation (in the request body) to register a new user
 //Passwords are sent unhased, then salted and hashed to bbe stored in the DB, using bcrypt
-app.put('/register', function(req, res){
+app.post('/register', function(req, res){
 
   console.log("Register method hit");
 
@@ -219,7 +252,7 @@ app.put('/register', function(req, res){
             message: 'Invalid Syntax'
           });
         } else {
-          var userToken = jwt.sign({"username": username}, tokenSecret);
+          var userToken = jwt.sign({"username": username}, TOKEN_SECRET);
           res.status(201).json({
               status: 'success',
               data: userToken,
@@ -257,7 +290,7 @@ app.put('/login', function(req, res){
       });
     } else {
       if(bcrypt.compareSync(password, data.rows[0].password)){
-        var userToken = jwt.sign({"username": username}, tokenSecret);
+        var userToken = jwt.sign({"username": username}, TOKEN_SECRET);
         res.status(200).json({
           status: 'success',
           data: userToken, //This user token should be stored client side and passed back to the server on authorized requests.
@@ -275,7 +308,7 @@ app.put('/login', function(req, res){
 
 
 //GET REQUEST to get user details, if the user is authenticated
-app.get('/user', expressJWT({secret: tokenSecret}), function(req, res){
+app.get('/user', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   var username = getUserFromToken(req);
   var query = squel.select().from('users').where("username = '" + username + "'").toString();
   client.query(query, function(error, data) {
@@ -295,7 +328,7 @@ app.get('/user', expressJWT({secret: tokenSecret}), function(req, res){
 });
 
 //POST request to add to or create a new cart if the user is logged in.
-app.post('/cart', expressJWT({secret: tokenSecret}), function(req, res){
+app.post('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 
   var username = getUserFromToken(req);
 
@@ -334,12 +367,12 @@ app.post('/cart', expressJWT({secret: tokenSecret}), function(req, res){
 });
 
 //PUT request to add an item to the already created cart of a logged in user.
-app.put('/cart', expressJWT({secret: tokenSecret}), function(req, res){
+app.put('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 
 });
 
 //GET request to retreive the contents of a logged in user's cart.
-app.get('/cart', expressJWT({secret: tokenSecret}), function(req, res){
+app.get('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   var username = getUserFromToken(req);
   var query = squel.select().from('carts').where("username = '" + username + "'").toString();
   client.query(query, function(error, data){
