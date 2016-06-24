@@ -46,7 +46,7 @@ app.use(bodyParser.urlencoded({ // to support URL­encoded bodies
 var plus = googleapis.plus('v1');
 var OAuth2 = googleapis.auth.OAuth2;
 var oauth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, "http://localhost:8080/oauthcallback");
-var scopes = ["https://www.googleapis.com/auth/plus.me"];
+var scopes = ["https://www.googleapis.com/auth/plus.me", "profile", "email", "openid"];
 var oAuthUrl = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   scope: scopes
@@ -91,7 +91,7 @@ app.get('/oauthcallback', function(req, res){
     }
   });
   plus.people.get({userId: 'me', auth: oauth2Client}, function(error, profile){
-    res.send(profile.displayName);
+    res.send(profile);
   });
 
 });
