@@ -1,12 +1,13 @@
 var ProductsService = angular.module('ProductsService', ["ngResource", "ngRoute", "ngCookies", "ngIdle"]);
 
 ProductsService.config(function ($httpProvider) {
-  $httpProvider.interceptors.push(['$q', '$location', '$cookieStore', '$rootScope',
-    function ($q, $location, $cookieStore, $rootScope) {
+  $httpProvider.interceptors.push(['$q', '$location', '$cookieStore', '$rootScope', '$injector',
+    function ($q, $location, $cookieStore, $rootScope, $injector) {
       return {
         'request': function (config) {
           config.headers = config.headers || {};
           config.headers.Authorization = 'Bearer ' + $cookieStore.get('token');
+          $injector.get('Idle').watch();
           return config;
         },
         'responseError': function (response) {
@@ -39,6 +40,18 @@ ProductsService.config(function ($routeProvider) {
   });
 });
 
+ProductsService.config(function(IdleProvider, KeepaliveProvider) {
+    // configure Idle settings
+    IdleProvider.idle(5); // in seconds
+    IdleProvider.timeout(5); // in seconds
+    KeepaliveProvider.interval(2); // in seconds
+});
+
+ProductsService.run(function(Idle){
+    // start watching when the app runs. also starts the Keepalive service by default.
+    Idle.watch();
+});
+
 ProductsService.controller('SignupController', ['$scope', '$rootScope', '$resource', '$location', '$cookieStore',
   function ($scope, $rootScope, $resource, $location, $cookieStore) {
     $scope.signup = function() {
@@ -61,7 +74,7 @@ ProductsService.controller('SignupController', ['$scope', '$rootScope', '$resour
       );
     }
   }
-]);
+])
 
 ProductsService.controller('CartController', ['$scope', '$rootScope', '$resource',
   function ($scope, $rootScope, $resource) {
@@ -144,7 +157,6 @@ ProductsService.controller('LoginController', ['$scope', '$rootScope', '$http', 
           $cookieStore.put('token', resp.data.data);
           $rootScope.loggedIn = !!$cookieStore.get('token');
           $location.path("/");
-          Idle.watch();
         }
       });
     }
@@ -159,9 +171,4 @@ ProductsService.controller('LoginController', ['$scope', '$rootScope', '$http', 
       }
     });
   }
-]).config(function(IdleProvider, KeepaliveProvider) {
-    // configure Idle settings
-    IdleProvider.idle(5); // in seconds
-    IdleProvider.timeout(5); // in seconds
-    KeepaliveProvider.interval(2); // in seconds
-});
+]);
