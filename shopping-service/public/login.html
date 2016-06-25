@@ -1,0 +1,30 @@
+<div id="loginbox" class="mainbox col-md-12">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <div class="panel-title">Sign In</div>
+    </div>
+    <div style="padding-top:30px" class="panel-body">
+      <div id="login-alert" style="display:none" class="alert alert-danger col-sm-12"></div>
+      <form id="loginform" ng-submit="login()" method="post" action="login" class="form-horizontal">
+        <div class="form-group">
+          <label for="username" class="col-md-4 control-label">Username</label>
+          <div class="col-md-7 col-md-offset-1">
+            <input id="pass" ng-model="username" type="username" name="username" placeholder="Username" class="form-control"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="pass" class="col-md-4 control-label">Password</label>
+          <div class="col-md-7 col-md-offset-1">
+            <input id="pass" type="password" ng-model="password" name="pass" placeholder="Password..." class="form-control"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-7 col-md-offset-4">
+            <!--a#btn-login.btn.btn-success(type='submit') Register -->
+            <button id="register1" style="color:#555555;font-weight:bold;margin-left:35px;" type="submit" class="btn btn-success">Login</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

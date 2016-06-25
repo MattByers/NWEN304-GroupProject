@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="row" ng-controller="CartController">
+    <div ng-show="successMessage" class="alert alert-success">
+      <strong>Success!</strong> {{ successMessage }}
+    </div>
+    <div ng-repeat="item in cartItems">
+      <div class="product-title">{{item.product_name}}</div>
+      <div class="product-desc">{{item.product_description}}</div>
+      <div class="product-price">{{item.price | currency}}</div>
+      <div class="product-quantity">Quantity: {{item.quantity}}</div>
+      <a ng-click="removeItemFromCart(item.productid)"> Remove </a>
+    </div>
+    <p><strong>Total:</strong> {{totalCartValue | currency}}</p>
+    <button ng-click="purchaseAllItems()">Purchase all items</button>
+  </div>
+</div>

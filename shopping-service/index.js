@@ -132,15 +132,14 @@ app.get('/oauthcallback', function(req, res){
 
 //Using a simple get request, will update when using search/categorise (If we need to its not actually a requirement)
 //GET Request for products
-app.get('/api/products', function(req, res){
-  var query = "SELECT * FROM products;";
+app.get('/products', function(req, res){
+  var query = squel.select().from("products").toString();
 
   if(req.body.name != null){
-    query = "SELECT * FROM products WHERE product_name='" + req.body.name + "';";
+    query = squel.select().from("products").where("product_name = ?", req.body.name).toString();  //<--- Secure way of doing SQL statements, this disallows SQL Injecttion
   }
 
   client.query(query, function (error, data) {
-
     if(error) {
       res.status(400).json({
         status: 'failed',
@@ -156,20 +155,21 @@ app.get('/api/products', function(req, res){
 
 //Changed slightly, still works the same
 //GET request for filtering product by ID, I need to do this for productname filtering ^^ too
-app.get('/api/products/:id', function(req, res) {
-  var query = "SELECT * FROM products WHERE productID='" +
-  parseInt(req.params.id) + "';";
+app.get('/products/:id', function(req, res) {
+  var query = squel.select()
+    .from("products")
+    .where("productID = ?", parseInt(req.params.id))
+    .toString();
 
   client.query(query, function(error, data){
-
-        if(error) {
-          res.status(400).json({
-            status: 'failed',
-            message: 'failed to retrieve product'
-          });
-        } else {
-          res.status(200).json(data.rows[0]);
-        }
+    if(error) {
+      res.status(400).json({
+        status: 'failed',
+        message: 'failed to retrieve product'
+      });
+    } else {
+      res.status(200).json(data.rows[0]);
+    }
   })
 });
 
@@ -266,14 +266,16 @@ app.post('/register', function(req, res){
 
 //PUT request to login based on the username and password supplied in the request body, passwords are sent unhashed
 app.put('/login', function(req, res){
-  console.log("Login method hit");
-
+	console.log("in ")
   var query;
 
   var username = req.body.username;
   var password = req.body.password;
 
-  query = squel.select().from('users').where("username = '" + username + "'").toString();
+  query = squel.select()
+    .from('users')
+    .where("username = ?", username)
+    .toString();
 
   client.query(query, function(error, data){
     if(error) {
@@ -306,11 +308,14 @@ app.put('/login', function(req, res){
   });
 });
 
-
 //GET REQUEST to get user details, if the user is authenticated
 app.get('/user', expressJWT({secret: TOKEN_SECRET}), function(req, res){
-  var username = getUserFromToken(req);
-  var query = squel.select().from('users').where("username = '" + username + "'").toString();
+  var username = req.user.username;
+  var query = squel.select()
+    .from('users')
+    .where("username = ?", username)
+    .toString();
+
   client.query(query, function(error, data) {
     if (error) {
       res.status(400).json({
@@ -329,21 +334,31 @@ app.get('/user', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 
 //POST request to add to or create a new cart if the user is logged in.
 app.post('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
+  if(!req.user) return res.status(401).json();
 
-  var username = getUserFromToken(req);
+  var quantity = 1;
+  var username = req.user.username
+  var productId = req.body.productId
 
-  var productID = req.body.productID;
-  var quantity = req.body.quantity;
+  var query = squel.update()
+    .table('carts')
+    .set("quantity = quantity + ?", quantity)
+    .where("username = ? AND productid = ?", username, productId )
+    .toString();
 
-  var query = squel.update().table('carts').set("quantity = quantity + " + quantity).where("username = '" + username + "'").where("productid = " + productID).toString();
   client.query(query, function(error, data){
     if(error) {
+      console.log(error);
       res.status(400).json({
         status: 'failed',
         message: 'Invalid data'
       });
-    } else if(data.rowCount < 1){
-      query = squel.insert().into('carts').setFields({'username': username, 'productid': productID, 'quantity': quantity}).toString();
+    } else if(data.rowCount == 0){
+      query = squel.insert()
+        .into('carts')
+        .setFields({ 'username': username, 'productid': productId, 'quantity': quantity })
+        .toString();
+
       client.query(query, function(error, data){
         if(error) {
           res.status(400).json({
@@ -366,41 +381,50 @@ app.post('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   });
 });
 
-//PUT request to add an item to the already created cart of a logged in user.
-app.put('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
+//DELETE request to add an item to the already created cart of a logged in user.
+app.delete('/cart/:id', expressJWT({secret: TOKEN_SECRET}), function(req, res){
+  if(!req.user) return res.status(401).json();
 
+  var username = req.user.username;
+  var productId = parseInt(req.params.id);
+
+  var query = squel.delete()
+    .from("carts")
+    .where("username = ? AND productid = ?", username, productId)
+    .toString();
+
+  client.query(query, function(error, data){
+    if(error) {
+      res.status(400).json();
+    } else {
+      res.status(204).json();
+    }
+  });
 });
 
 //GET request to retreive the contents of a logged in user's cart.
 app.get('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
-  var username = getUserFromToken(req);
-  var query = squel.select().from('carts').where("username = '" + username + "'").toString();
+  if(!req.user) return res.status(401).json();
+
+  var query = squel.select()
+    .from('carts')
+    .field("*")
+    .field("price * quantity as totalPrice")
+    .join("products", null, "carts.productid = products.productid")
+    .where("carts.username = ?", req.user.username)
+    .toString();
+
   client.query(query, function(error, data){
     if(error) {
+      console.log(error);
       res.status(400).json({
         status: 'failed',
         message: 'Authorization error'
       });
     } else {
-      res.status(200).json({
-        status: 'success',
-        data: data.rows,
-        message: 'Successfully retrieved user cart'
-      });
+      res.status(200).json(data.rows);
     }
   });
 });
-
-//Given a request obkect, this function will return the user who made the request based on the JWT
-var getUserFromToken = function(req){
-  //Code from the express-jwt documentation
-  var toReturn;
-  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-    var token = req.headers.authorization.split(' ')[1];
-    var decodedToken = jwt.decode(token);
-    toReturn = decodedToken.username;
-  }
-  return toReturn;
-};
 
 app.listen(port);

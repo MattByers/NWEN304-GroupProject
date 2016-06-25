@@ -1,0 +1,39 @@
+<div class="row" ng-controller="SignupController">
+  <form id="registrationForm" ng-submit="signup()" method="post" action="/register" class="form-horizontal">
+    <div class="form-group">
+      <label for="firstName" class="control-label col-md-4">First Name</label>
+      <div class="col-md-7 col-md-offset-1">
+        <input id="firstName" ng-model="firstName" type="text" name="firstName" placeholder="First Name..." class="form-control"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="lastName" class="control-label col-md-4">Last Name</label>
+      <div class="col-md-7 col-md-offset-1">
+        <input id="lastName" ng-model="lastName" type="text" name="lastName" placeholder="Last Name..." class="form-control"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="username" class="control-label col-md-4">User Name</label>
+      <div class="col-md-7 col-md-offset-1">
+        <input id="username" ng-model="username" type="text" name="username" placeholder="Username..." class="form-control"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="email" class="col-md-4 control-label">Email</label>
+      <div class="col-md-7 col-md-offset-1">
+        <input id="email" ng-model="email" type="email" name="email" placeholder="Email..." class="form-control"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password" class="col-md-4 control-label">Password</label>
+      <div class="col-md-7 col-md-offset-1">
+        <input id="password" ng-model="password" type="password" name="password" placeholder="Password..." class="form-control"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-7 col-md-offset-4">
+        <button id="register1" style="color:#555555;font-weight:bold;margin-left:35px;" type="submit" class="btn btn-warning">Register</button>
+      </div>
+    </div>
+  </form>
+</div>
