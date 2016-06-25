@@ -1,4 +1,4 @@
-var ProductsService = angular.module('ProductsService', ["ngResource", "ngRoute", "ngCookies"]);
+var ProductsService = angular.module('ProductsService', ["ngResource", "ngRoute", "ngCookies", "ngIdle"]);
 
 ProductsService.config(function ($httpProvider) {
   $httpProvider.interceptors.push(['$q', '$location', '$cookieStore', '$rootScope',
@@ -128,8 +128,8 @@ ProductsService.controller('ProductsShowController', ['$scope','$rootScope', '$r
   }
 ]);
 
-ProductsService.controller('LoginController', ['$scope', '$rootScope', '$http', '$cookieStore', '$location',
-  function ($scope, $rootScope, $http, $cookieStore, $location) {
+ProductsService.controller('LoginController', ['$scope', '$rootScope', '$http', '$cookieStore', '$location', 'Idle',
+  function ($scope, $rootScope, $http, $cookieStore, $location, Idle) {
     $rootScope.loggedIn = !!$cookieStore.get('token');
 
     $scope.logout = function() {
@@ -144,9 +144,24 @@ ProductsService.controller('LoginController', ['$scope', '$rootScope', '$http', 
           $cookieStore.put('token', resp.data.data);
           $rootScope.loggedIn = !!$cookieStore.get('token');
           $location.path("/");
+          Idle.watch();
         }
       });
     }
-  }
-]);
+    $scope.events = [];
 
+    $scope.$on('IdleTimeout', function() {
+      if($rootScope.loggedIn) {
+        $cookieStore.remove('token');
+        $rootScope.loggedIn = !!$cookieStore.get('token');
+        $location.path("/login");
+        $scope.$apply();
+      }
+    });
+  }
+]).config(function(IdleProvider, KeepaliveProvider) {
+    // configure Idle settings
+    IdleProvider.idle(5); // in seconds
+    IdleProvider.timeout(5); // in seconds
+    KeepaliveProvider.interval(2); // in seconds
+});
