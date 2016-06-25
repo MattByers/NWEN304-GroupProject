@@ -42,9 +42,6 @@ ProductsService.config(function ($routeProvider) {
 ProductsService.controller('SignupController', ['$scope', '$rootScope', '$resource', '$location', '$cookieStore',
   function ($scope, $rootScope, $resource, $location, $cookieStore) {
     $scope.signup = function() {
-      if(!!event)
-        event.preventDefault();
-
       var Register = $resource("/register");
       var registration = new Register({
         username: this.username,
@@ -136,16 +133,12 @@ ProductsService.controller('LoginController', ['$scope', '$rootScope', '$http', 
     $rootScope.loggedIn = !!$cookieStore.get('token');
 
     $scope.logout = function() {
-      if(!!event)
-        event.preventDefault();
       $cookieStore.remove('token');
       $rootScope.loggedIn = !!$cookieStore.get('token');
       $location.path("/login");
     }
 
     $scope.login = function() {
-      if(!!event)
-        event.preventDefault();
       $http.put("/login", {username: this.username, password: this.password}).then(function(resp) {
         if(resp.data.data) {
           $cookieStore.put('token', resp.data.data);
