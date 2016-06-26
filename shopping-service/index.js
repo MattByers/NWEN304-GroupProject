@@ -81,11 +81,13 @@ app.use(function(req, res, next) {
 /*-------------------------------------------------- RESTFUL API --------------------------------------------------*/
 
 
+//Get request that redirects to a specifically created Google address for oAuth
 app.get('/google', function(req, res) {
   res.cacheControl("no-cache");
   res.redirect(oAuthUrl);
 });
 
+//GET request that is called by Google oAuth once a user is authenticated
 app.get('/oauthcallback', function(req, res){
   res.cacheControl("no-cache");
   var code = req.query.code;
@@ -93,10 +95,18 @@ app.get('/oauthcallback', function(req, res){
     if(!error) {
       console.log(tokens);
       oauth2Client.setCredentials(tokens);
+    } else {
+      res.status(400).json();
     }
   });
   plus.people.get({userId: 'me', auth: oauth2Client}, function(error, profile){
-    res.send(profile);
+    var username = profile.getEmail;
+    var userToken = jwt.sign({"username": username}, TOKEN_SECRET);
+    res.status(200).json({
+      status: 'success',
+      data: userToken, //This user token should be stored client side and passed back to the server on authorized requests.
+      message: 'Logged in successfully'
+    });
   });
 
 });
