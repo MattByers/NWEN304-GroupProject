@@ -1,6 +1,47 @@
 Test Scripts (Curl) for Server-End:
 
+curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 38912c65-c0f6-39ea-13a2-cb8b7d20bbbf" -d '{
+    "username": "test",
+    "password": "123",
+    "email": "testEmail@fake.com",
+    "firstName": "Im",
+    "lastName": "Fake",
+    "address": "100 Not Real Road"
+}' "http://localhost:8080/register"
 
+curl -X PUT -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: c47b3a15-e914-ae92-2edb-342179120013" -d '{
+    "username": "test",
+    "password": "123"
+}' "http://localhost:8080/login"
+
+curl -X PUT -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: c47b3a15-e914-ae92-2edb-342179120013" -d '{
+    "username": "test",
+    "password": "123"
+}' "http://localhost:8080/login"
+
+curl -X GET -H "Cache-Control: no-cache" -H "Postman-Token: 1a83406f-10fd-8c70-fccc-8e4aa55842f5" "http://localhost:8080/products/2"
+
+curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: db3481fc-fe96-8c36-493e-93375fc80070" -d '{
+    "productName": "Test Pear",
+    "productDesc": "TestPear",
+    "type": "Pear",
+    "price": "10.00",
+    "image": "http://usapears.org/wp-content/uploads/2015/04/red-anjou-pear.jpg"
+
+}' "http://localhost:8080/product"
+
+
+//IMPORTANT: For the following the JWT is needed for authorisation, the JWT is required after Bearer in the below. JWT is supplied as response body when logging in or registering.
+
+curl -X GET -H "Authorization: Bearer [JWT HERE]" -H "Cache-Control: no-cache" -H "Postman-Token: 4955e99a-9058-5614-9c4e-9532f27c4253" "http://localhost:8080/user"
+
+curl -X GET -H "Authorization: Bearer [JWT HERE]" -H "Cache-Control: no-cache" -H "Postman-Token: 8e11e781-e683-1dfa-7cd7-76a121862c37" "http://localhost:8080/cart"
+
+curl -X POST -H "Authorization: Bearer [JWT HERE]" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: e9e80afc-e0a2-d4a1-a0fa-c1ebc1439223" -d '{
+    "productId": 2
+}' "http://localhost:8080/cart"
+
+curl -X DELETE -H "Authorization: Bearer [JWT HERE]" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 77f327b8-8210-4dcd-9fde-7acb7135448e" -d '' "http://localhost:8080/cart/2"
 
 Test Cases for Client-End:
 

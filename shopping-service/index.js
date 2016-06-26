@@ -195,14 +195,21 @@ app.post('/product', function(req, res) {
   var productName = req.body.productName;
   var productDesc = req.body.productDesc;
   var price = req.body.price;
+  var image = req.body.image;
+  var type = req.body.type;
 
   var query = squel.insert().into('products')
-                    .setFields({"product_name": productName, "product_description": productDesc, "price": price})
+                    .setFields({"product_name": productName,
+                    "product_description": productDesc,
+                    "price": price,
+                    "imageurl": image,
+                    "product_type": type})
                     .toString();
 
   client.query(query, function(error, data){
 
         if(error) {
+          console.log(error);
           res.status(400).json({
             status: 'failed',
             message: 'failed to create product',
