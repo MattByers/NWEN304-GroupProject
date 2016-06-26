@@ -62,15 +62,15 @@ var oAuthUrl = oauth2Client.generateAuthUrl({
 //app.use("/js", express.static(__dirname + '/js'));
 //app.use("/fonts", express.static(__dirname + '/fonts'));
 //app.use(express.static(__dirname + '/public'));
-app.use('/', express.static('public'));
+app.use('/', express.static('public' , {maxAge: 86400000 }));
 
 //Header setup
 app.use(function(req, res, next) {
+  res.cacheControl({maxAge: 28800});
   if (req.headers.origin) {
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type,Authorization')
     res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE')
-    res.header({'Cache-Control': 'public, max-age=300'})
     if (req.method === 'OPTIONS') return res.send(200)
   }
   next();
@@ -79,7 +79,6 @@ app.use(function(req, res, next) {
 
 
 /*-------------------------------------------------- RESTFUL API --------------------------------------------------*/
-
 
 
 app.get('/google', function(req, res) {
@@ -163,7 +162,7 @@ app.get('/products', function(req, res){
 //Changed slightly, still works the same
 //GET request for filtering product by ID, I need to do this for productname filtering ^^ too
 app.get('/products/:id', function(req, res) {
-  res.cacheControl({maxAge: 28000});
+  res.cacheControl({maxAge: 28800});
   var query = squel.select()
     .from("products")
     .where("productID = ?", parseInt(req.params.id))
@@ -274,6 +273,7 @@ app.post('/register', function(req, res){
 
 //PUT request to login based on the username and password supplied in the request body, passwords are sent unhashed
 app.put('/login', function(req, res){
+  res.cacheControl("no-cache");
 	console.log("in ")
   var query;
 
