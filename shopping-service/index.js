@@ -293,7 +293,7 @@ app.put('/login', function(req, res){
         message: 'Invalid Syntax'
       });
     } else if(data.rows[0] == null){
-      res.status(400).json({
+      res.status(404).json({
         status: 'failed',
         data: username,
         message: 'username not found'
@@ -319,7 +319,7 @@ app.put('/login', function(req, res){
 //GET REQUEST to get user details, if the user is authenticated
 app.get('/user', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   res.cacheControl("no-cache");
-  var username = req.user.username;
+  var username = getUserFromToken(req);
   var query = squel.select()
     .from('users')
     .where("username = ?", username)
@@ -346,7 +346,7 @@ app.post('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   if(!req.user) return res.status(401).json();
 
   var quantity = 1;
-  var username = req.user.username
+  var username = getUserFromToken(req);
   var productId = req.body.productId
 
   var query = squel.update()
@@ -394,7 +394,7 @@ app.post('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 app.delete('/cart/:id', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   if(!req.user) return res.status(401).json();
 
-  var username = req.user.username;
+  var username = getUserFromToken(req);
   var productId = parseInt(req.params.id);
 
   var query = squel.delete()
@@ -414,14 +414,17 @@ app.delete('/cart/:id', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 //GET request to retreive the contents of a logged in user's cart.
 app.get('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   res.cacheControl("no-cache");
-  if(!req.user) return res.status(401).json();
+
+  var username = getUserFromToken(req);
+
+  //if(!req.user) return res.status(401).json();
 
   var query = squel.select()
     .from('carts')
     .field("*")
     .field("price * quantity as totalPrice")
     .join("products", null, "carts.productid = products.productid")
-    .where("carts.username = ?", req.user.username)
+    .where("carts.username = ?", username)
     .toString();
 
   client.query(query, function(error, data){
@@ -436,5 +439,18 @@ app.get('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
     }
   });
 });
+
+//Given a request object, this function will return the user who made the request based on the JWT
+var getUserFromToken = function(req){
+  //Code from the express-jwt documentation
+  var toReturn;
+  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+    var token = req.headers.authorization.split(' ')[1];
+    var decodedToken = jwt.decode(token);
+    toReturn = decodedToken.username;
+  }
+  return toReturn;
+};
+
 
 app.listen(port);
