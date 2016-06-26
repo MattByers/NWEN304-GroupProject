@@ -48,3 +48,9 @@ Test Cases for Client-End:
 
 
 Test Cases for Caching:
+
+The testing for cache control can be carried out in browser, using a developer console we can
+load the index page and see that it has a max-age=86400 seconds, then after clicking on links
+to other pages on the website we can see that the responses provide appropriate cacheControl
+the product page itself has a max-age of just 3600 seconds, while the individual product pages
+have a max-age of 28800 seconds, finally if logged in you can see the cart page is no-cached.
