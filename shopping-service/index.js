@@ -319,7 +319,7 @@ app.put('/login', function(req, res){
 //GET REQUEST to get user details, if the user is authenticated
 app.get('/user', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   res.cacheControl("no-cache");
-  var username = getUserFromToken(req);
+  var username = getUserFromToken(req, res);
   var query = squel.select()
     .from('users')
     .where("username = ?", username)
@@ -346,7 +346,7 @@ app.post('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   if(!req.user) return res.status(401).json();
 
   var quantity = 1;
-  var username = getUserFromToken(req);
+  var username = getUserFromToken(req, res);
   var productId = req.body.productId
 
   var query = squel.update()
@@ -394,7 +394,7 @@ app.post('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 app.delete('/cart/:id', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   if(!req.user) return res.status(401).json();
 
-  var username = getUserFromToken(req);
+  var username = getUserFromToken(req, res);
   var productId = parseInt(req.params.id);
 
   var query = squel.delete()
@@ -415,7 +415,7 @@ app.delete('/cart/:id', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 app.get('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
   res.cacheControl("no-cache");
 
-  var username = getUserFromToken(req);
+  var username = getUserFromToken(req, res);
 
   //if(!req.user) return res.status(401).json();
 
@@ -441,15 +441,15 @@ app.get('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 });
 
 //Given a request object, this function will return the user who made the request based on the JWT
-var getUserFromToken = function(req){
+var getUserFromToken = function(req, res){
   //Code from the express-jwt documentation
-  var toReturn;
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
     var token = req.headers.authorization.split(' ')[1];
     var decodedToken = jwt.decode(token);
-    toReturn = decodedToken.username;
+    return(decodedToken.username);
+  } else {
+    res.status(400).json();
   }
-  return toReturn;
 };
 
 
