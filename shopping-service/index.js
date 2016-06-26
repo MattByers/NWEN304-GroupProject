@@ -12,13 +12,13 @@ var port = process.env.PORT || 8080;
 var express = require('express');
 var path = require("path");
 var pg = require("pg").native;
+var cacheResponseDirective = require('express-cache-response-directive');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
 var squel = require('squel');
 var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
 var googleapis = require('googleapis');
-var sslRedirect = require('heroku-ssl-redirect');
 
 
 
@@ -40,6 +40,8 @@ app.use(bodyParser.urlencoded({ // to support URL­encoded bodies
   extended: true
 }));
 
+app.use(cacheResponseDirective());
+
 //JWT Authorization setup - THIS SECRET HAS TO BE SET TO SOMETHING BETTER -
 //app.use(expressJWT({secret: TOKEN_SECRET}).unless({ path: ['/', '/public', '/login', '/register', '/products']}));
 //I've decided I will only protect the API routes I want, instead of using this unless syntax, which is bugging my static page.
@@ -56,6 +58,10 @@ var oAuthUrl = oauth2Client.generateAuthUrl({
 
 
 //static setup
+//app.use("/css", express.static(__dirname + '/css'));
+//app.use("/js", express.static(__dirname + '/js'));
+//app.use("/fonts", express.static(__dirname + '/fonts'));
+//app.use(express.static(__dirname + '/public'));
 app.use('/', express.static('public'));
 
 //Header setup
@@ -64,13 +70,11 @@ app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type,Authorization')
     res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE')
+    res.header({'Cache-Control': 'public, max-age=300'})
     if (req.method === 'OPTIONS') return res.send(200)
   }
   next();
 })
-
-//Redirects Heroku to SSL version
-app.use(sslRedirect());
 
 
 
@@ -78,13 +82,13 @@ app.use(sslRedirect());
 
 
 
-//Get request that redirects to a specifically created Google address for oAuth
 app.get('/google', function(req, res) {
+  res.cacheControl("no-cache");
   res.redirect(oAuthUrl);
 });
 
-//GET request that is called by Google oAuth once a user is authenticated
 app.get('/oauthcallback', function(req, res){
+  res.cacheControl("no-cache");
   var code = req.query.code;
   oauth2Client.getToken(code, function(error, tokens){
     if(!error) {
@@ -93,13 +97,7 @@ app.get('/oauthcallback', function(req, res){
     }
   });
   plus.people.get({userId: 'me', auth: oauth2Client}, function(error, profile){
-    var username = profile.getEmail;
-    var userToken = jwt.sign({"username": username}, TOKEN_SECRET);
-    res.status(200).json({
-      status: 'success',
-      data: userToken, //This user token should be stored client side and passed back to the server on authorized requests.
-      message: 'Logged in successfully'
-    });
+    res.send(profile);
   });
 
 });
@@ -141,6 +139,7 @@ app.get('/oauthcallback', function(req, res){
 //Using a simple get request, will update when using search/categorise (If we need to its not actually a requirement)
 //GET Request for products
 app.get('/products', function(req, res){
+  res.cacheControl({maxAge: 3600});
   var query = squel.select().from("products").toString();
 
   if(req.body.name != null){
@@ -164,6 +163,7 @@ app.get('/products', function(req, res){
 //Changed slightly, still works the same
 //GET request for filtering product by ID, I need to do this for productname filtering ^^ too
 app.get('/products/:id', function(req, res) {
+  res.cacheControl({maxAge: 28000});
   var query = squel.select()
     .from("products")
     .where("productID = ?", parseInt(req.params.id))
@@ -318,6 +318,7 @@ app.put('/login', function(req, res){
 
 //GET REQUEST to get user details, if the user is authenticated
 app.get('/user', expressJWT({secret: TOKEN_SECRET}), function(req, res){
+  res.cacheControl("no-cache");
   var username = req.user.username;
   var query = squel.select()
     .from('users')
@@ -412,6 +413,7 @@ app.delete('/cart/:id', expressJWT({secret: TOKEN_SECRET}), function(req, res){
 
 //GET request to retreive the contents of a logged in user's cart.
 app.get('/cart', expressJWT({secret: TOKEN_SECRET}), function(req, res){
+  res.cacheControl("no-cache");
   if(!req.user) return res.status(401).json();
 
   var query = squel.select()

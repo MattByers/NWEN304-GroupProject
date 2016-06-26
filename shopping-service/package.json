@@ -12,6 +12,7 @@
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
+    "express-cache-response-directive": "^1.0.0",
     "express-jwt": "^3.4.0",
     "googleapis": "^9.0.0",
     "heroku-ssl-redirect": "0.0.3",
