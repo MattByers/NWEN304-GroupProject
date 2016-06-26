@@ -18,6 +18,7 @@ var squel = require('squel');
 var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
 var googleapis = require('googleapis');
+var sslRedirect = require('heroku-ssl-redirect');
 
 
 
@@ -55,10 +56,6 @@ var oAuthUrl = oauth2Client.generateAuthUrl({
 
 
 //static setup
-//app.use("/css", express.static(__dirname + '/css'));
-//app.use("/js", express.static(__dirname + '/js'));
-//app.use("/fonts", express.static(__dirname + '/fonts'));
-//app.use(express.static(__dirname + '/public'));
 app.use('/', express.static('public'));
 
 //Header setup
@@ -72,16 +69,21 @@ app.use(function(req, res, next) {
   next();
 })
 
+//Redirects Heroku to SSL version
+app.use(sslRedirect());
+
 
 
 /*-------------------------------------------------- RESTFUL API --------------------------------------------------*/
 
 
 
+//Get request that redirects to a specifically created Google address for oAuth
 app.get('/google', function(req, res) {
   res.redirect(oAuthUrl);
 });
 
+//GET request that is called by Google oAuth once a user is authenticated
 app.get('/oauthcallback', function(req, res){
   var code = req.query.code;
   oauth2Client.getToken(code, function(error, tokens){
@@ -91,7 +93,13 @@ app.get('/oauthcallback', function(req, res){
     }
   });
   plus.people.get({userId: 'me', auth: oauth2Client}, function(error, profile){
-    res.send(profile);
+    var username = profile.getEmail;
+    var userToken = jwt.sign({"username": username}, TOKEN_SECRET);
+    res.status(200).json({
+      status: 'success',
+      data: userToken, //This user token should be stored client side and passed back to the server on authorized requests.
+      message: 'Logged in successfully'
+    });
   });
 
 });
